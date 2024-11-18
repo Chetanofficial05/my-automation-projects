@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="Suite">
+	<test thread-count="1" name="Test">
+		<classes>
+			<class name="com.mk.testcases.Herokuapptestcases"></class>
+			<class name="com.mk.testcases.LoginTest"></class>
+			<class name="com.mk.testcases.DashboardTest"></class>
+		</classes>
+	</test> <!--
+	Test -->
+</suite> <!--
+Suite -->

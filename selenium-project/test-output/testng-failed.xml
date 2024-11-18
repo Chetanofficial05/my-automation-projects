@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="Failed suite [Suite]" guice-stage="DEVELOPMENT">
+  <test thread-count="5" name="Test(failed)">
+    <classes>
+      <class name="com.mk.testcases.DashboardTest">
+        <methods>
+          <include name="TC_4"/>
+          <include name="aftersuite"/>
+          <include name="navigateToDashboard"/>
+          <include name="setUp"/>
+          <include name="TC_8"/>
+          <include name="tearDown"/>
+          <include name="TC_6"/>
+        </methods>
+      </class> <!-- com.mk.testcases.DashboardTest -->
+      <class name="com.mk.testcases.Herokuapptestcases">
+        <methods>
+          <include name="validateTinyMceEditor"/>
+          <include name="setup"/>
+          <include name="addRemoveElements"/>
+          <include name="validateFileUpload"/>
+          <include name="validateDragAndDrop"/>
+          <include name="validateCheckboxes"/>
+          <include name="validateDropdown"/>
+          <include name="validateJSPrompt"/>
+          <include name="validateContextMenuAlert"/>
+          <include name="verifyTextInFrames"/>
+          <include name="tearDown"/>
+          <include name="validateJSAlert"/>
+          <include name="validateLastNameSorting"/>
+          <include name="testNewWindowText"/>
+          <include name="validateBrokenImages"/>
+          <include name="validateEmailColumnFormat"/>
+          <include name="aftersuite"/>
+          <include name="testShadowDom"/>
+          <include name="validateJSConfirm"/>
+          <include name="testTableHeaders"/>
+        </methods>
+      </class> <!-- com.mk.testcases.Herokuapptestcases -->
+    </classes>
+  </test> <!-- Test(failed) -->
+</suite> <!-- Failed suite [Suite] -->
