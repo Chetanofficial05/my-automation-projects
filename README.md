@@ -21,7 +21,6 @@ This repository contains two automation projects: Rest Assured and Selenium.
   - Hybrid Framework
   - Test cases for web applications OrangeHRM and Herokuapp
   - Data-driven testing using TestNG
-  - Cross-browser testing with Selenium WebDriver.
   - Beautiful Extent Report, Log4J
   - Page Object Model (POM) design pattern.
 - **How to run:**
