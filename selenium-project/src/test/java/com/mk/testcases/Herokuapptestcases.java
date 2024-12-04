@@ -21,22 +21,25 @@ import com.mk.pages.HerokuappPage;
 import com.mk.utils.ExtentUtil;
 
 public class Herokuapptestcases extends BaseTest {
-	
+
 	private HerokuappPage happ;
 	private static final Logger log = LogManager.getLogger(Herokuapptestcases.class);
 
 	@BeforeClass
 	public void setup() throws IOException {
 		log.info("BeforeClass setup of herokuapptestcases");
-		
+
+		loadProperties("src/test/resources/config.properties");
+		log.info("loadProperties");
+
 		initializeDriver();
 		log.info("BeforeClass initializeDriver of herokuapptestcases");
-		
-		// Initializing the page object
+
+		// Initialising the page object
 		happ = new HerokuappPage(getDriver());
 		log.info("HerokuappPage object initialized.");
 
-		// Initializing the Extent Report
+		// Initialising the Extent Report
 		ExtentUtil.initReport(getDriver());
 		log.info("Extent Report initialized successfully.");
 	}
@@ -44,7 +47,7 @@ public class Herokuapptestcases extends BaseTest {
 	@AfterClass
 	public void tearDown() {
 		log.info("AfterClass tearDown");
-		
+
 		tearDownDriver();
 		log.info("AfterClass tearDown ended");
 	}
@@ -54,10 +57,12 @@ public class Herokuapptestcases extends BaseTest {
 		ExtentUtil.createTest("Add/Remove Elements Test", "Smoke");
 		log.info("Test started: Verifying the addition and deletion of 'Delete' buttons.");
 
-		// Navigate to the Add/Remove Elements page
-		getDriver().get("https://the-internet.herokuapp.com/add_remove_elements/");
-		ExtentUtil.logInfo("Navigated to https://the-internet.herokuapp.com/add_remove_elements/");
-		log.info("Page loaded: https://the-internet.herokuapp.com/add_remove_elements/");
+		// Fetch URL from properties file
+		String url = properties.getProperty("add_remove_elements_url");
+		getDriver().get(url);
+
+		ExtentUtil.logInfo("Navigated to URL :" + url);
+		log.info("Navigated to URL {}", url);
 
 		// Add elements
 		log.info("Attempting to add 'Delete' elements to the page...");
@@ -66,9 +71,9 @@ public class Herokuapptestcases extends BaseTest {
 		ExtentUtil.logInfo("Added" + addDeleteElementsCount + " Delete elements to the page.");
 		log.info("Added 'Delete' elements count: " + addDeleteElementsCount);
 
-		 Assert.assertEquals(addDeleteElementsCount, elementsToAdd, "Number of 'Delete' buttons added is incorrect.");
-		    log.info("Successfully added " + elementsToAdd + " 'Delete' buttons.");
-		    ExtentUtil.logInfo("Successfully added " + elementsToAdd + " 'Delete' buttons.");
+		Assert.assertEquals(addDeleteElementsCount, elementsToAdd, "Number of 'Delete' buttons added is incorrect.");
+		log.info("Successfully added " + elementsToAdd + " 'Delete' buttons.");
+		ExtentUtil.logInfo("Successfully added " + elementsToAdd + " 'Delete' buttons.");
 
 		// Delete elements
 		log.info("Attempting to delete 3 'Delete' elements");
@@ -77,20 +82,19 @@ public class Herokuapptestcases extends BaseTest {
 		int remainingDeleteCount = addDeleteElementsCount - delno;
 
 		Assert.assertEquals(delno, elementsToDelete, "Number of 'Delete' buttons deleted is incorrect.");
-	    log.info("Successfully deleted " + elementsToDelete + " 'Delete' buttons.");
-	    ExtentUtil.logInfo("Successfully deleted " + elementsToDelete + " 'Delete' buttons.");
+		log.info("Successfully deleted " + elementsToDelete + " 'Delete' buttons.");
+		ExtentUtil.logInfo("Successfully deleted " + elementsToDelete + " 'Delete' buttons.");
 
-
-	    try {
-	        Assert.assertEquals(remainingDeleteCount, delno, "Number of 'Delete' buttons remaining is incorrect.");
-	        log.info("Number of 'Delete' buttons remaining: " + delno);
-	        ExtentUtil.logPass("Number of 'Delete' buttons remaining: " + delno);
-	    } catch (AssertionError e) {
-	        String exceptionMessage = e.getMessage();
-	        log.info("Number of 'Delete' buttons remaining: " + delno);
+		try {
+			Assert.assertEquals(remainingDeleteCount, delno, "Number of 'Delete' buttons remaining is incorrect.");
+			log.info("Number of 'Delete' buttons remaining: " + delno);
+			ExtentUtil.logPass("Number of 'Delete' buttons remaining: " + delno);
+		} catch (AssertionError e) {
+			String exceptionMessage = e.getMessage();
+			log.info("Number of 'Delete' buttons remaining: " + delno);
 			ExtentUtil.logFail(exceptionMessage + "<< Purposefully Failed");
-	        throw e; 
-	    }
+			throw e;
+		}
 	}
 
 	@Test(groups = { "Smoke" })
@@ -98,9 +102,12 @@ public class Herokuapptestcases extends BaseTest {
 		ExtentUtil.createTest("Validate Broken Images", "Smoke");
 		log.info("Test started: Validating broken images.");
 
-		getDriver().get("https://the-internet.herokuapp.com/broken_images");
-		log.info("Navigated to broken images page.");
-		ExtentUtil.logInfo("Navigated to: https://the-internet.herokuapp.com/broken_images");
+		// Fetch URL from properties file
+		String url = properties.getProperty("broken_images_url");
+		getDriver().get(url);
+
+		ExtentUtil.logInfo("Navigated to URL :" + url);
+		log.info("Navigated to URL {}", url);
 
 		int brokenImageCount = happ.countBrokenImage();
 		log.info("Total broken images count: " + brokenImageCount);
@@ -116,8 +123,8 @@ public class Herokuapptestcases extends BaseTest {
 		} catch (AssertionError e) {
 			ExtentUtil.logFail("Broken images count mismatched. Expected " + expectedBrokenImages + " but found "
 					+ brokenImageCount);
-			log.error("Test failed: Broken image count mismatch. Expected: " + expectedBrokenImages + ", Found: "
-					+ brokenImageCount, e);
+			log.error("Test failed: Broken image count mismatch. Expected: {}, Found: {}", expectedBrokenImages,
+					brokenImageCount, e);
 			Assert.fail("Test failed due to broken image count mismatch.");
 			throw e; // Rethrow exception for proper test reporting
 		}
@@ -127,41 +134,42 @@ public class Herokuapptestcases extends BaseTest {
 
 	@Test(groups = { "Regression" })
 	public void checkFirstRowData() {
-	    ExtentUtil.createTest("Check First Row Data", "Regression");
-	    log.info("Test started: Check First Row Data");
+		ExtentUtil.createTest("Check First Row Data", "Regression");
+		log.info("Test started: Check First Row Data");
 
-	    // Navigate to the page
-	    getDriver().get("https://the-internet.herokuapp.com/challenging_dom");
-	    log.info("Navigated to: https://the-internet.herokuapp.com/challenging_dom");
-	    ExtentUtil.logInfo("Navigated to: https://the-internet.herokuapp.com/challenging_dom");
+		// Fetch URL from properties file
+		String url = properties.getProperty("challenging_dom_url");
+		getDriver().get(url);
 
-	    // Get the first row column headers
-	    List<String> headerText = happ.getheaders();
-        List<String> expectedHeaders = Arrays.asList("Lorem", "Ipsum", "Dolor", "Sit", "Amet", "Diceret");
+		ExtentUtil.logInfo("Navigated to URL :" + url);
+		log.info("Navigated to URL {}", url);
 
-	    // Validate the retrieved data
-	    if (headerText != null && !headerText.isEmpty()) {
-	        log.info("Validating Headers Text");
-	        ExtentUtil.logListAsHtml("Headers Text", headerText);
-	        // Validate the headers
-	        try {
-	            Assert.assertEquals(headerText, expectedHeaders, "Actual headers do not match the expected headers.");
-	            log.info("Actual headers match the expected headers."+headerText);
-	            ExtentUtil.logPass("Actual headers match the expected headers."+headerText);
-	        } catch (AssertionError e) {
-	            log.error("Mismatch in headers: " + e.getMessage());
-	            ExtentUtil.logFail("Mismatch in headers. Expected: " + expectedHeaders + ", Actual: " + headerText);
-	            throw e; // Ensure test fails if validation fails
-	        }
-	    } else {
-	        log.error("Failed to retrieve headers expected :"+expectedHeaders);
-	        ExtentUtil.logFail("Failed to retrieve headers expected :"+expectedHeaders);
-	        Assert.fail("Failed to retrieve headers expected :"+expectedHeaders);
-	    }
+		// Get the first row column headers
+		List<String> headerText = happ.getheaders();
+		List<String> expectedHeaders = Arrays.asList("Lorem", "Ipsum", "Dolor", "Sit", "Amet", "Diceret");
 
-	    log.info("Test completed: Checked first row column headers.");
+		// Validate the retrieved data
+		if (headerText != null && !headerText.isEmpty()) {
+			log.info("Validating Headers Text");
+			ExtentUtil.logListAsHtml("Headers Text", headerText);
+			// Validate the headers
+			try {
+				Assert.assertEquals(headerText, expectedHeaders, "Actual headers do not match the expected headers.");
+				log.info("Actual headers match the expected headers." + headerText);
+				ExtentUtil.logPass("Actual headers match the expected headers." + headerText);
+			} catch (AssertionError e) {
+				log.error("Mismatch in headers: " + e.getMessage());
+				ExtentUtil.logFail("Mismatch in headers. Expected: " + expectedHeaders + ", Actual: " + headerText);
+				throw e; // Ensure test fails if validation fails
+			}
+		} else {
+			log.error("Failed to retrieve headers expected :" + expectedHeaders);
+			ExtentUtil.logFail("Failed to retrieve headers expected :" + expectedHeaders);
+			Assert.fail("Failed to retrieve headers expected :" + expectedHeaders);
+		}
+
+		log.info("Test completed: Checked first row column headers.");
 	}
-
 
 	@Test(groups = { "Regression" })
 	public void validateCheckboxes() {
@@ -169,9 +177,12 @@ public class Herokuapptestcases extends BaseTest {
 		ExtentUtil.createTest("Validate Checkboxes", "Regression");
 		log.info("Test started: Validating checkboxes.");
 
-		getDriver().get("https://the-internet.herokuapp.com/checkboxes");
-		log.info("Navigated to: https://the-internet.herokuapp.com/checkboxes");
-		ExtentUtil.logInfo("Navigated to https://the-internet.herokuapp.com/checkboxes");
+		// Fetch URL from properties file
+		String url = properties.getProperty("checkboxes_url");
+		getDriver().get(url);
+
+		ExtentUtil.logInfo("Navigated to URL :" + url);
+		log.info("Navigated to URL {}", url);
 
 		// Check if both checkboxes are selected
 		log.info("Checking both checkboxes.");
@@ -215,10 +226,12 @@ public class Herokuapptestcases extends BaseTest {
 		log.info("Starting test: Validate Drag and Drop.");
 		ExtentUtil.createTest("Validate Drag and Drop", "Regression");
 
-		// Navigate to the page
-		getDriver().get("https://the-internet.herokuapp.com/drag_and_drop");
-		log.info("Navigated to: https://the-internet.herokuapp.com/drag_and_drop");
-		ExtentUtil.logInfo("Navigated to https://the-internet.herokuapp.com/drag_and_drop");
+		// Fetch URL from properties file
+		String url = properties.getProperty("drag_and_drop_url");
+		getDriver().get(url);
+
+		ExtentUtil.logInfo("Navigated to URL :" + url);
+		log.info("Navigated to URL {}", url);
 
 		// Perform drag and drop
 		log.info("Performing drag and drop action.");
@@ -243,10 +256,12 @@ public class Herokuapptestcases extends BaseTest {
 		log.info("Starting test: Validate Dropdown.");
 		ExtentUtil.createTest("Validate Dropdown", "Smoke");
 
-		// Navigate to the page
-		getDriver().get("https://the-internet.herokuapp.com/dropdown");
-		log.info("Navigated to: https://the-internet.herokuapp.com/dropdown");
-		ExtentUtil.logInfo("Navigated to https://the-internet.herokuapp.com/dropdown");
+		// Fetch URL from properties file
+		String url = properties.getProperty("dropdown_url");
+		getDriver().get(url);
+
+		ExtentUtil.logInfo("Navigated to URL :" + url);
+		log.info("Navigated to URL {}", url);
 
 		// Select "Option 1" and validate
 		String optionToSelect = "Option 1";
@@ -274,10 +289,12 @@ public class Herokuapptestcases extends BaseTest {
 		log.info("Starting test: Verify Checkbox Remove and Add.");
 		ExtentUtil.createTest("Verify Checkbox Remove and Add", "Regression");
 
-		// Navigate to the Dynamic Controls page
-		getDriver().get("https://the-internet.herokuapp.com/dynamic_controls");
-		log.info("Navigated to: https://the-internet.herokuapp.com/dynamic_controls");
-		ExtentUtil.logInfo("Navigated to https://the-internet.herokuapp.com/dynamic_controls");
+		// Fetch URL from properties file
+		String url = properties.getProperty("dynamic_controls_url");
+		getDriver().get(url);
+
+		ExtentUtil.logInfo("Navigated to URL :" + url);
+		log.info("Navigated to URL {}", url);
 
 		// Remove Checkbox
 		log.info("Attempting to remove the checkbox.");
@@ -315,10 +332,12 @@ public class Herokuapptestcases extends BaseTest {
 		log.info("Starting test: Validate Context Menu Alert.");
 		ExtentUtil.createTest("Validate Context Menu Alert", "Smoke");
 
-		// Navigate to the context menu page
-		getDriver().get("https://the-internet.herokuapp.com/context_menu");
-		log.info("Navigated to: https://the-internet.herokuapp.com/context_menu");
-		ExtentUtil.logInfo("Navigated to URL https://the-internet.herokuapp.com/context_menu");
+		// Fetch URL from properties file
+		String url = properties.getProperty("context_menu_url");
+		getDriver().get(url);
+
+		ExtentUtil.logInfo("Navigated to URL :" + url);
+		log.info("Navigated to URL {}", url);
 
 		try {
 			log.info("Attempting to perform right-click action.");
@@ -340,10 +359,12 @@ public class Herokuapptestcases extends BaseTest {
 		log.info("Starting test: Validate File Upload.");
 		ExtentUtil.createTest("Validate File Upload", "Regression");
 
-		// Navigate to the File Upload page
-		getDriver().get("https://the-internet.herokuapp.com/upload");
-		log.info("Navigated to: https://the-internet.herokuapp.com/upload");
-		ExtentUtil.logInfo("Navigated to URL https://the-internet.herokuapp.com/upload");
+		// Fetch URL from properties file
+		String url = properties.getProperty("upload_url");
+		getDriver().get(url);
+
+		ExtentUtil.logInfo("Navigated to URL :" + url);
+		log.info("Navigated to URL {}", url);
 
 		try {
 			log.info("Attempting to upload the file.");
@@ -375,9 +396,12 @@ public class Herokuapptestcases extends BaseTest {
 		log.info("Starting test: Validate TinyMCE WYSIWYG Editor Page.");
 		ExtentUtil.createTest("Validate TinyMCE WYSIWYG Editor Page", "Regression");
 
-		getDriver().get("https://the-internet.herokuapp.com/iframe");
-		log.info("Navigated to TinyMCE WYSIWYG Editor page.");
-		ExtentUtil.logInfo("Navigated to URL https://the-internet.herokuapp.com/iframe");
+		// Fetch URL from properties file
+		String url = properties.getProperty("iframe_url");
+		getDriver().get(url);
+
+		ExtentUtil.logInfo("Navigated to URL :" + url);
+		log.info("Navigated to URL {}", url);
 
 		try {
 			// Close the alert if present
@@ -414,8 +438,12 @@ public class Herokuapptestcases extends BaseTest {
 		log.info("Starting test: Verify Text in Nested Frames.");
 		ExtentUtil.createTest("Validate nested frames", "Regression");
 
-		getDriver().get("https://the-internet.herokuapp.com/nested_frames");
-		ExtentUtil.logInfo("Navigated to URL https://the-internet.herokuapp.com/nested_frames");
+		// Fetch URL from properties file
+		String url = properties.getProperty("nested_frames_url");
+		getDriver().get(url);
+
+		ExtentUtil.logInfo("Navigated to URL :" + url);
+		log.info("Navigated to URL {}", url);
 
 		// Check if the frames are displayed and get the text
 		String leftText = happ.getFrameText("left");
@@ -484,10 +512,12 @@ public class Herokuapptestcases extends BaseTest {
 		Logger log = LogManager.getLogger(this.getClass());
 		ExtentUtil.createTest("Validate JavaScript Alert", "Regression");
 
-		// Navigate to the JavaScript Alerts page
-		getDriver().get("https://the-internet.herokuapp.com/javascript_alerts");
-		log.info("Navigated to JavaScript Alerts page.");
-		ExtentUtil.logInfo("Navigated to URL https://the-internet.herokuapp.com/javascript_alerts");
+		// Fetch URL from properties file
+		String url = properties.getProperty("javascript_alerts_url");
+		getDriver().get(url);
+
+		ExtentUtil.logInfo("Navigated to URL :" + url);
+		log.info("Navigated to URL {}", url);
 
 		String actualText = happ.clickJSAlertButton();
 		String expectedAlertText = "I am a JS Alert";
@@ -523,21 +553,23 @@ public class Herokuapptestcases extends BaseTest {
 	public void validateJSConfirm() {
 		ExtentUtil.createTest("Validate JavaScript Confirm", "Regression");
 
-		// Navigate to the JavaScript Alerts page
-		getDriver().get("https://the-internet.herokuapp.com/javascript_alerts");
-		log.info("Navigated to JavaScript Alerts page");
-		ExtentUtil.logInfo("Navigated to URL https://the-internet.herokuapp.com/javascript_alerts");
+		// Fetch URL from properties file
+		String url = properties.getProperty("javascript_alerts_url");
+		getDriver().get(url);
+
+		ExtentUtil.logInfo("Navigated to URL :" + url);
+		log.info("Navigated to URL {}", url);
 
 		String actualText = happ.clickJSConfirmButton();
 		String expectedAlertText = "I am a JS Confirm";
 
 		// Validate alert text
 		if (actualText.equals(expectedAlertText)) {
-			log.info("Alert text is correct: " + actualText);
+			log.info("Alert text is correct: {}", actualText);
 			ExtentUtil.logInfo("Alert text is correct: " + actualText);
 			Assert.assertTrue(true, "Alert text is correct");
 		} else {
-			log.info("No such alert " + expectedAlertText + ", but found: " + actualText);
+			log.info("No such alert {}, but found: {}", expectedAlertText, actualText);
 			ExtentUtil.logInfo("No such alert " + expectedAlertText + ", but found: " + actualText);
 			Assert.fail("No such alert ");
 		}
@@ -547,11 +579,11 @@ public class Herokuapptestcases extends BaseTest {
 		String expectedFailMessage = "You clicked: Cancel";
 
 		if (successMessage.equals(expectedSuccessMessage)) {
-			log.info("Alert accepted, success message is displayed as: " + successMessage);
+			log.info("Alert accepted, success message is displayed as: {}", successMessage);
 			ExtentUtil.logPass("Alert accepted, success message is displayed as: " + successMessage);
 			Assert.assertEquals(successMessage, expectedSuccessMessage, "Success message is displayed");
 		} else if (successMessage.equals(expectedFailMessage)) {
-			log.error("Alert not accepted. Expected: '" + expectedFailMessage + "', but found: " + successMessage);
+			log.error("Alert not accepted. Expected: {}, but found: {}", expectedFailMessage, successMessage);
 			ExtentUtil.logFail(
 					"Alert not accepted. Expected: '" + expectedFailMessage + "', but found: " + successMessage);
 			Assert.fail("Alert not accepted");
@@ -562,21 +594,24 @@ public class Herokuapptestcases extends BaseTest {
 	public void validateJSPrompt() {
 		ExtentUtil.createTest("Validate JavaScript Prompt", "Regression");
 
-		getDriver().get("https://the-internet.herokuapp.com/javascript_alerts");
-		log.info("Navigated to JavaScript Alerts page");
-		ExtentUtil.logInfo("Navigated to URL https://the-internet.herokuapp.com/javascript_alerts");
+		// Fetch URL from properties file
+		String url = properties.getProperty("javascript_alerts_url");
+		getDriver().get(url);
+
+		ExtentUtil.logInfo("Navigated to URL :" + url);
+		log.info("Navigated to URL {}", url);
 
 		String enteredText = happ.clickJSPromptButton(true);
 		String expectedEnteredText = "Hello, this is a test!";
 
 		if (enteredText.equals(expectedEnteredText)) {
-			log.info("Entered text in the prompt is correct: " + enteredText);
-			ExtentUtil.logPass("Entered text in the prompt is correct: " + enteredText);
+			log.info("Entered text in the prompt is correct: {}", enteredText);
+			ExtentUtil.logInfo("Entered text in the prompt is correct: " + enteredText);
 			Assert.assertTrue(true, "Entered text in the prompt is correct");
 		} else {
-			log.error("Entered text in the prompt is incorrect. Expected: '" + expectedEnteredText + "', but found: '"
-					+ enteredText + "'");
-			ExtentUtil.logFail("Entered text in the prompt is incorrect. Expected: '" + expectedEnteredText
+			log.error("Entered text in the prompt is incorrect. Expected: {}, but found: {}", expectedEnteredText,
+					enteredText);
+			ExtentUtil.logInfo("Entered text in the prompt is incorrect. Expected: '" + expectedEnteredText
 					+ "', but found: '" + enteredText + "'");
 			Assert.fail("Entered text in the prompt is incorrect");
 		}
@@ -586,14 +621,14 @@ public class Herokuapptestcases extends BaseTest {
 		String expectedSuccessMessage = "You entered: " + expectedEnteredText;
 
 		try {
-			Assert.assertEquals(successMessage,expectedSuccessMessage); 
-			log.info("Text accepted in the prompt. Success message: " + successMessage);
+			Assert.assertEquals(successMessage, expectedSuccessMessage);
+			log.info("Text accepted in the prompt. Success message: {}", successMessage);
 			ExtentUtil.logPass("Text accepted in the prompt. Success message: " + successMessage);
 			Assert.assertEquals(successMessage, expectedSuccessMessage, "Success message is displayed");
-		} catch(AssertionError e) {
+		} catch (AssertionError e) {
 			String exceptionMessage = e.getMessage();
-			log.error("Success message not displayed" + exceptionMessage);
-			ExtentUtil.logFail("Success message not displayed "+ exceptionMessage);
+			log.error("Success message not displayed " + exceptionMessage);
+			ExtentUtil.logFail("Success message not displayed " + exceptionMessage);
 			Assert.fail("Text not accepted in the prompt");
 			throw e;
 		}
@@ -602,44 +637,67 @@ public class Herokuapptestcases extends BaseTest {
 
 	@Test(groups = { "Regression" })
 	public void testNewWindowText() {
-	    ExtentUtil.createTest("Verify New Window Text", "Regression");
-	    log.info("Test: Verify New Window Text");
+		ExtentUtil.createTest("Verify New Window Text", "Regression");
+		log.info("Test: Verify New Window Text");
 
-	    getDriver().get("https://the-internet.herokuapp.com/windows");
-	    log.info("Navigated to the Windows page");
+		// Fetch URL from properties file
+		String url = properties.getProperty("windows_url");
+		getDriver().get(url);
 
-	    ExtentUtil.logInfo("Navigated to URL https://the-internet.herokuapp.com/windows");
+		ExtentUtil.logInfo("Navigated to URL :" + url);
+		log.info("Navigated to URL {}", url);
 
-	    // Verify text in the new window and switch back to the original window
-	    String actualText = happ.newWindow();
-	    String expectedText = "New Window";
+		String actualcurrentwindowText = happ.getTextfromCurrentWindow();
+		String expectedcurrentwindowText = "Opening a new window";
 
-	    if (actualText.equals(expectedText)) {
-	        log.info("New window opened with text: " + actualText);
-	        ExtentUtil.logPass("New window opened with text: " + actualText);
-	        Assert.assertEquals(actualText, expectedText, "New window text matches expected.");
-	        log.info("Validation passed.");
-	    } else {
-	        log.error("New window text does not match expected. Found: " + actualText);
-	        ExtentUtil.logFail("New window text does not match expected. Found: " + actualText);
-	        Assert.fail("New window text does not match expected.");
-	    }
+		ExtentUtil.logInfo("currentwindowText actual " + actualcurrentwindowText + " and Expected is "
+				+ expectedcurrentwindowText);
+		log.info("currentwindowText actual {} and Expected is {}", actualcurrentwindowText, expectedcurrentwindowText);
 
-	    log.info("Switched back to the original window.");
+		if (actualcurrentwindowText.equals(expectedcurrentwindowText)) {
+			log.info("Current window has expected and actual text are same " + actualcurrentwindowText);
+			ExtentUtil.logInfo("Current window has expected and actual text are same " + actualcurrentwindowText);
+			Assert.assertEquals(actualcurrentwindowText, expectedcurrentwindowText,
+					"Current window text matches expected.");
+			log.info("Validation passed.");
+		} else {
+			log.error("Current window text does not match expected. Found: " + actualcurrentwindowText);
+			ExtentUtil.logInfo("Current window text does not match expected. Found: " + actualcurrentwindowText);
+			Assert.fail("Current window text does not match expected.");
+		}
+
+		// Verify text in the new window and switch back to the original window
+		String actualText = happ.newWindow();
+		String expectedText = "New Window";
+
+		if (actualText.equals(expectedText)) {
+			log.info("New window opened with text: " + actualText);
+			ExtentUtil.logPass("New window opened with text: " + actualText);
+			Assert.assertEquals(actualText, expectedText, "New window text matches expected.");
+			log.info("Validation passed.");
+		} else {
+			log.error("New window text does not match expected. Found: " + actualText);
+			ExtentUtil.logFail("New window text does not match expected. Found: " + actualText);
+			Assert.fail("New window text does not match expected.");
+		}
+
+		log.info("Switched back to the original window.");
 	}
-
 
 	@Test(groups = { "Regression" })
 	public void testShadowDom() {
 		ExtentUtil.createTest("Verify Shadow DOM Text", "Regression");
 		log.info("Starting test: Verify Shadow DOM Text");
 
-		getDriver().get("https://the-internet.herokuapp.com/shadowdom");
-		log.info("Navigated to Shadow DOM page: https://the-internet.herokuapp.com/shadowdom");
-		ExtentUtil.logInfo("Navigated to URL https://the-internet.herokuapp.com/shadowdom");
+		// Fetch URL from properties file
+		String url = properties.getProperty("shadowdom_url");
+		getDriver().get(url);
+
+		ExtentUtil.logInfo("Navigated to URL :" + url);
+		log.info("Navigated to URL {}", url);
 
 		String text = happ.getTextFromShadowDom();
-		log.info("Text retrieved from Shadow DOM: " + text);
+		log.info("Text retrieved from Shadow DOM: {}", text);
 
 		if (text.equals("Let's have some different text!")) {
 			log.info("Test passed: Text inside Shadow DOM is correct.");
@@ -647,7 +705,7 @@ public class Herokuapptestcases extends BaseTest {
 			Assert.assertTrue(text.equals("Let's have some different text!"),
 					"Text inside Shadow DOM matches the expected value.");
 		} else {
-			log.error("Test failed: Expected text 'Let's have some different text!', but found: " + text);
+			log.error("Test failed: Expected text 'Let's have some different text!', but found: {}", text);
 			ExtentUtil.logFail("Text inside Shadow DOM not found: " + text);
 			Assert.fail("Test Failed: Text inside Shadow DOM not found.");
 		}
@@ -658,12 +716,15 @@ public class Herokuapptestcases extends BaseTest {
 		log.info("Starting test: Validate Table Headers");
 		ExtentUtil.createTest("Validate Table Headers", "Regression");
 
-		getDriver().get("https://the-internet.herokuapp.com/tables");
-		log.info("Navigated to URL: https://the-internet.herokuapp.com/tables");
-		ExtentUtil.logInfo("Navigated to URL: https://the-internet.herokuapp.com/tables");
+		// Fetch URL from properties file
+		String url = properties.getProperty("tables_url");
+		getDriver().get(url);
+
+		ExtentUtil.logInfo("Navigated to URL :" + url);
+		log.info("Navigated to URL {}", url);
 
 		List<String> expectedHeaders = Arrays.asList("Last Name", "First Name", "Email", "Due", "Web Site", "Action");
-		log.info("Expected headers: " + expectedHeaders);
+		log.info("Expected headers: {}", expectedHeaders);
 		ExtentUtil.logInfo("Expected headers: " + expectedHeaders.toString());
 
 		boolean isHeadersValid = happ.validateTableHeaders(expectedHeaders);
@@ -674,7 +735,7 @@ public class Herokuapptestcases extends BaseTest {
 			ExtentUtil.logPass("All headers are present and match the expected values.");
 			Assert.assertTrue(isHeadersValid, "Headers are present and valid.");
 		} else {
-			log.error("Validation failed: Headers mismatch detected. Expected headers: " + expectedHeaders);
+			log.error("Validation failed: Headers mismatch detected. Expected headers: {}", expectedHeaders);
 			ExtentUtil.logFail("Headers do not match the expected values.");
 			Assert.fail("Headers mismatch detected.");
 		}
@@ -685,10 +746,12 @@ public class Herokuapptestcases extends BaseTest {
 		ExtentUtil.createTest("Validate Sort Last Name Column", "Regression");
 		log.info("Starting test: Validate Sort Last Name Column");
 
-		// Navigate to the page with the table
-		getDriver().get("https://the-internet.herokuapp.com/tables");
-		ExtentUtil.logInfo("Navigated to URL: https://the-internet.herokuapp.com/tables");
-		log.info("Navigated to URL: https://the-internet.herokuapp.com/tables");
+		// Fetch URL from properties file
+		String url = properties.getProperty("tables_url");
+		getDriver().get(url);
+
+		ExtentUtil.logInfo("Navigated to URL :" + url);
+		log.info("Navigated to URL {}", url);
 
 		// Click on the "Last Name" header to sort the table by last name
 		happ.clickLastNameHeader();
@@ -729,10 +792,12 @@ public class Herokuapptestcases extends BaseTest {
 		ExtentUtil.createTest("Validate Email Column Format", "Regression");
 		log.info("Starting test: Validate Email Column Format");
 
-		// Navigate to the page with the table
-		getDriver().get("https://the-internet.herokuapp.com/tables");
-		ExtentUtil.logInfo("Navigated to URL: https://the-internet.herokuapp.com/tables");
-		log.info("Navigated to URL: https://the-internet.herokuapp.com/tables");
+		// Fetch URL from properties file
+		String url = properties.getProperty("tables_url");
+		getDriver().get(url);
+
+		ExtentUtil.logInfo("Navigated to URL :" + url);
+		log.info("Navigated to URL {}", url);
 
 		// Fetch email values from the table
 		List<String> emails = happ.getEmailColumnValues();
@@ -773,10 +838,12 @@ public class Herokuapptestcases extends BaseTest {
 		log.info("Starting test: Validate text from Shadow DOM");
 		ExtentUtil.createTest("Validate text from Shadow DOM", "Smoke");
 
-		// Navigate to the Shadow DOM page
-		getDriver().get("https://the-internet.herokuapp.com/shadowdom");
-		log.info("Navigated to URL: https://the-internet.herokuapp.com/shadowdom");
-		ExtentUtil.logInfo("Navigated to URL: https://the-internet.herokuapp.com/shadowdom");
+		// Fetch URL from properties file
+		String url = properties.getProperty("shadowdom_url");
+		getDriver().get(url);
+
+		ExtentUtil.logInfo("Navigated to URL :" + url);
+		log.info("Navigated to URL {}", url);
 
 		// Retrieve text from Shadow DOM
 		String textfromDOM = happ.getTextFromShadowDom();
@@ -797,4 +864,5 @@ public class Herokuapptestcases extends BaseTest {
 		}
 	}
 
+	
 }

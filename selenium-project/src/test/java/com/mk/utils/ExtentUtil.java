@@ -13,6 +13,8 @@ import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.edge.EdgeDriver;
+import org.openqa.selenium.edge.EdgeDriver;
 
 import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.ExtentTest;
@@ -42,11 +44,14 @@ public class ExtentUtil {
 
 			String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()); // Generate a timestamp for
 			// the report filename
+
+			// Get the browser name from the WebDriver instance
+			String browserName = getBrowserName(driver).toLowerCase(); // Example: "chrome", "edge", "firefox"
+
 			log.info("Generated timestamp: {}", timeStamp);
 
-			reportPath = System.getProperty("user.dir") + "/Reports/ExtentReport_" + timeStamp + ".html"; // Set the
-																											// report
-																											// path
+			reportPath = System.getProperty("user.dir") + "/Reports/ExtentReport_" + timeStamp + "_" + browserName
+					+ ".html"; // Set the report path
 			log.info("Report will be saved at: {}", reportPath);
 
 			ExtentSparkReporter sparkReporter = new ExtentSparkReporter(reportPath); // Create a reporter for
@@ -208,6 +213,11 @@ public class ExtentUtil {
 		if (driver instanceof ChromeDriver) {
 			// If it's Chrome, return Chrome as the browser name
 			return "Chrome";
+		}
+
+		else if (driver instanceof EdgeDriver) {
+			// If it's Chrome, return Chrome as the browser name
+			return "Edge";
 		}
 		// Extend this check for other browsers if necessary
 		return "Unknown Browser"; // Default to unknown if it's not Chrome

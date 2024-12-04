@@ -9,6 +9,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.edge.EdgeDriver;
 import org.testng.annotations.AfterSuite;
 
 import com.mk.utils.ExtentUtil;
@@ -47,31 +48,55 @@ public class BaseTest {
 	}
 
 	/**
-	 * Initialize the WebDriver and set it in ThreadLocal.
+	 * Initialize the WebDriver and set it in ThreadLocal based on the browser value
+	 * from the properties file.
 	 */
 	public void initializeDriver() {
 		log.info("Initializing WebDriver...");
+		
+		// Get the browser name from properties file (e.g., "chrome", "edge"). Default
+		// to "chrome" if not specified.
+		String browser = properties.getProperty("browser", "chrome").trim();
+		
+		log.info("Browser selected from properties: {}", browser);
 
 		// Check if the WebDriver instance is already set in ThreadLocal.
 		if (driverThreadLocal.get() == null) {
-			WebDriverManager.chromedriver().setup();
-			log.info("WebDriverManager setup");
+			try {
+				switch (browser.toLowerCase()) {
+				case "chrome":
+					WebDriverManager.chromedriver().setup();
+					driverThreadLocal.set(new ChromeDriver());
+					log.info("ChromeDriver initialized");
+					break;
+				case "edge":
+					WebDriverManager.edgedriver().setup();
+					driverThreadLocal.set(new EdgeDriver());
+					log.info("EdgeDriver initialized");
+					break;
+				default:
+					log.error("Unsupported browser: {}. Defaulting to Chrome.", browser);
+					WebDriverManager.chromedriver().setup(); // Fallback to ChromeDriver
+					driverThreadLocal.set(new ChromeDriver());
+					log.info("ChromeDriver initialized as fallback");
+					break;
+				}
 
-			WebDriver driver = new ChromeDriver();
-			log.info("ChromeDriver object created");
+				WebDriver driver = driverThreadLocal.get();
+				driver.manage().window().maximize();
+				log.info("Browser window maximized");
+				driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
+				log.info("Implicit wait set");
 
-			driver.manage().window().maximize();
-			log.info("Chrome Browser maximized");
-
-			driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
-			log.info("implicitlyWait set");
-
-			driverThreadLocal.set(driver);
-			log.info("WebDriver initialized successfully.");
+				log.info("WebDriver initialized successfully.");
+			} catch (Exception e) {
+				log.error("Error while initializing WebDriver: {}", e.getMessage(), e);
+				throw new RuntimeException("WebDriver initialization failed.");
+			}
 		} else {
 			log.info("WebDriver already initialized in ThreadLocal.");
 		}
-		log.info("initializeDriver Closed");
+		log.info("initializeDriver method closed");
 	}
 
 	/**
@@ -116,8 +141,7 @@ public class BaseTest {
 			driverThreadLocal.remove(); // Clean up ThreadLocal
 			log.info("WebDriver closed successfully.");
 
-		} else
-		{
+		} else {
 			log.warn("WebDriver is already null, skipping quit.");
 		}
 	}
