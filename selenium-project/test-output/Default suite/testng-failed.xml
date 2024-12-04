@@ -3,30 +3,14 @@
 <suite name="Failed suite [Default suite]" guice-stage="DEVELOPMENT">
   <test thread-count="5" name="Default test(failed)">
     <classes>
-      <class name="com.mk.testcases.herokuapptestcases">
+      <class name="com.mk.testcases.Herokuapptestcases">
         <methods>
-          <include name="validateCheckboxes"/>
-          <include name="validateDropdown"/>
-          <include name="validateJSPrompt"/>
-          <include name="validateContextMenuAlert"/>
           <include name="addRemoveElements"/>
           <include name="setup"/>
-          <include name="validateTinyMceEditor"/>
-          <include name="validateFileUpload"/>
-          <include name="validateDragAndDrop"/>
-          <include name="validateJSAlert"/>
-          <include name="validateLastNameSorting"/>
-          <include name="testNewWindowText"/>
+          <include name="aftersuite"/>
           <include name="tearDown"/>
-          <include name="verifyTextInFrames"/>
-          <include name="checkFirstRowData"/>
-          <include name="validateBrokenImages"/>
-          <include name="validateEmailColumnFormat"/>
-          <include name="validateJSConfirm"/>
-          <include name="testTableHeaders"/>
-          <include name="testShadowDom"/>
         </methods>
-      </class> <!-- com.mk.testcases.herokuapptestcases -->
+      </class> <!-- com.mk.testcases.Herokuapptestcases -->
     </classes>
   </test> <!-- Default test(failed) -->
 </suite> <!-- Failed suite [Default suite] -->

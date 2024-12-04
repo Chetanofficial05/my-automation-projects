@@ -14,6 +14,7 @@ import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.NoAlertPresentException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -59,6 +60,7 @@ public class HerokuappPage {
 
 	private By closeButton = By.xpath("//div[@class='tox-icon' and @aria-label='Close']");
 	private By iframeLocator = By.id("mce_0_ifr");
+
 	// Locators for the top frame and its child frames
 	private By topFrame = By.xpath("//frame[@name='frame-top']");
 	private By leftFrame = By.xpath("//frame[@name='frame-left']");
@@ -81,19 +83,32 @@ public class HerokuappPage {
 	private By table1HeaderCells = By.xpath("//table[@id='table1']/thead/tr/th");
 
 	// Locators
-	By lastNameHeader = By.xpath("//table[@id='table1']//th/span");
-	By lastNameCells = By.xpath("//table[@id='table1']/tbody/tr/td[1]");
+	private By lastNameHeader = By.xpath("//table[@id='table1']//th/span");
+	private By lastNameCells = By.xpath("//table[@id='table1']/tbody/tr/td[1]");
 
 	private By emailCells = By.xpath("//table[@id='table1']/tbody/tr/td[3]");
 
+	// windows
+	private By currenwindowText = By.xpath("//div[@class='example']/h3");
+	private By clickhere = By.xpath("//a[text()='Click Here']");
+	
+	
+
 	public HerokuappPage(WebDriver driver) {
 		log.info("HerokuappPage Constructor started");
-		
+
 		this.driver = driver;
 		log.info("HerokuappPage Constructor this driver");
-		
+
 		this.wait = new WebDriverWait(driver, Duration.ofSeconds(15));
 		log.info("HerokuappPage Constructor this wait");
+	}
+
+	public String getTextfromCurrentWindow() {
+		log.info("Inside getTextfromCurrentWindow method");
+		String text = driver.findElement(currenwindowText).getText();
+		log.info("getText got: {}", text);
+		return text;
 	}
 
 	public void switchToFrame(String frameName) {
@@ -202,12 +217,13 @@ public class HerokuappPage {
 
 	public int addclickElementMultipleTimes(int times) {
 		log.info("addclickElementMultipleTimes method started");
-		
-		WebDriverWait wait = new  WebDriverWait(driver, Duration.ofSeconds(10));
-		WebElement addElementButtonvisible = wait.until(ExpectedConditions.visibilityOfElementLocated(addElementButton));
-		
+
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+		WebElement addElementButtonvisible = wait
+				.until(ExpectedConditions.visibilityOfElementLocated(addElementButton));
+
 		log.info("Clicking 'Add Element' button " + times + " times.");
-		
+
 		for (int i = 0; i < times; i++) {
 			addElementButtonvisible.click();
 			log.info("addElementButtonvisible clicked");
@@ -242,7 +258,6 @@ public class HerokuappPage {
 		List<WebElement> images = driver.findElements(brokenimages);
 
 		log.info("Total images found for checking: " + images.size());
-	
 
 		for (WebElement img : images) {
 			try {
@@ -257,44 +272,44 @@ public class HerokuappPage {
 				if (responseCode >= 400) {
 					brokenImageCount++;
 					log.warn("Broken image found: " + imgUrl + " with response code: " + responseCode);
-					
+
 				}
 				connection.disconnect();
 			} catch (IOException e) {
 				log.error("Exception while verifying image: " + e.getMessage(), e);
-				
+
 			}
 		}
 
 		log.info("Total broken images found: " + brokenImageCount);
-		
+
 		return brokenImageCount;
 	}
 
 	public List<String> getheaders() {
-	    List<String> headerData = new ArrayList<>();
-	    try {
-	        log.info("Attempting to retrieve the first row column headers.");
+		List<String> headerData = new ArrayList<>();
+		try {
+			log.info("Attempting to retrieve the first row column headers.");
 
-	        // Find all cells in the header row (assuming the header row is the first row in the table)
-	        List<WebElement> headerCells = driver.findElements(tableheaders);
+			// Find all cells in the header row (assuming the header row is the first row in
+			// the table)
+			List<WebElement> headerCells = driver.findElements(tableheaders);
 
-	        if (headerCells.isEmpty()) {
-	            log.warn("No table headers");
-	        } else {
-	            for (WebElement cell : headerCells) {
-	                String cellText = cell.getText().trim(); // Trim to clean up spaces
-	                headerData.add(cellText);
-	                log.info("Header cell data: " + cellText);
-	            }
-	        }
-	        log.info("First row column header retrieval completed with " + headerData.size() + " cells.");
-	    } catch (Exception e) {
-	        log.error("Exception while retrieving first row column headers: " + e.getMessage(), e);
-	    }
-	    return headerData;
+			if (headerCells.isEmpty()) {
+				log.warn("No table headers");
+			} else {
+				for (WebElement cell : headerCells) {
+					String cellText = cell.getText().trim(); // Trim to clean up spaces
+					headerData.add(cellText);
+					log.info("Header cell data: " + cellText);
+				}
+			}
+			log.info("First row column header retrieval completed with " + headerData.size() + " cells.");
+		} catch (Exception e) {
+			log.error("Exception while retrieving first row column headers: " + e.getMessage(), e);
+		}
+		return headerData;
 	}
-
 
 	public boolean checkCheckBox() {
 		try {
@@ -314,20 +329,20 @@ public class HerokuappPage {
 
 			if (!checkbox2Element.isSelected()) {
 				log.info("Checkbox 2 is not selected, clicking it.");
-				
+
 				checkbox2Element.click();
 			} else {
 				log.info("Checkbox 2 is already selected.");
-				
+
 			}
 
 			boolean result = checkbox1Element.isSelected() && checkbox2Element.isSelected();
 			log.info("Checkbox check result: {}", result);
-			
+
 			return result;
 		} catch (Exception e) {
 			log.error("Exception while checking checkboxes: {}", e.getMessage());
-			
+
 			return false;
 		}
 	}
@@ -335,36 +350,35 @@ public class HerokuappPage {
 	public boolean uncheckCheckboxes() {
 		try {
 			log.info("Attempting to uncheck both checkboxes.");
-			
 
 			WebElement checkbox1Element = driver.findElement(checkbox1);
 			WebElement checkbox2Element = driver.findElement(checkbox2);
 
 			if (checkbox1Element.isSelected()) {
 				log.info("Checkbox 1 is selected, clicking to uncheck.");
-				
+
 				checkbox1Element.click();
 			} else {
 				log.info("Checkbox 1 is already unchecked.");
-				
+
 			}
 
 			if (checkbox2Element.isSelected()) {
 				log.info("Checkbox 2 is selected, clicking to uncheck.");
-				
+
 				checkbox2Element.click();
 			} else {
 				log.info("Checkbox 2 is already unchecked.");
-				
+
 			}
 
 			boolean result = !checkbox1Element.isSelected() && !checkbox2Element.isSelected();
 			log.info("Checkbox uncheck result: {}", result);
-			
+
 			return result;
 		} catch (Exception e) {
 			log.error("Exception while unchecking checkboxes: {}", e.getMessage());
-			
+
 			return false;
 		}
 	}
@@ -475,6 +489,7 @@ public class HerokuappPage {
 			actions.contextClick(element).perform();
 			log.info("Right-click performed successfully. Checking for alert.");
 			acceptAlertIfPresent();
+			element.sendKeys(Keys.ESCAPE);
 		} catch (Exception e) {
 			log.error("Exception occurred during right-click action: {}", e.getMessage(), e);
 			throw e;
@@ -665,35 +680,32 @@ public class HerokuappPage {
 	}
 
 	public String newWindow() {
-	    String originalWindow = driver.getWindowHandle();
-	    log.info("Original window handle: " + originalWindow);
+		String originalWindow = driver.getWindowHandle();
+		log.info("Original window handle: " + originalWindow);
 
-	    driver.findElement(By.linkText("Click Here")).click();
-	    log.info("Clicked on 'Click Here' link to open a new window.");
+		driver.findElement(clickhere).click();
+		log.info("Clicked on 'Click Here' link to open a new window.");
 
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+		wait.until(ExpectedConditions.numberOfWindowsToBe(2));
 
-	    WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-	    wait.until(ExpectedConditions.numberOfWindowsToBe(2));
+		for (String windowHandle : driver.getWindowHandles()) {
+			if (!windowHandle.equals(originalWindow)) {
+				driver.switchTo().window(windowHandle);
+				log.info("Switched to new window with handle: " + windowHandle);
+				break;
+			}
+		}
 
-	    for (String windowHandle : driver.getWindowHandles()) {
-	        if (!windowHandle.equals(originalWindow)) {
-	            driver.switchTo().window(windowHandle);
-	            log.info("Switched to new window with handle: " + windowHandle);
-	            break;
-	        }
-	    }
+		WebElement newWindowText = wait.until(ExpectedConditions.visibilityOfElementLocated(By.tagName("h3")));
+		String text = newWindowText.getText();
+		log.info("Text found in the new window: " + text);
 
-	    WebElement newWindowText = wait.until(ExpectedConditions.visibilityOfElementLocated(By.tagName("h3")));
-	    String text = newWindowText.getText();
-	    log.info("Text found in the new window: " + text);
+		driver.close(); // Close the new window
+		driver.switchTo().window(originalWindow);
 
-	    driver.close(); // Close the new window
-	//    driver.switchTo().window(originalWindow);
-	//    log.info("Switched back to the original window with handle: " + originalWindow);
-
-	    return text;
+		return text;
 	}
-
 
 	public void switchBackToOriginalWindow() {
 		driver.switchTo().defaultContent();

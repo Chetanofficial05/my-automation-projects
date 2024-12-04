@@ -16,26 +16,11 @@
       </class> <!-- com.mk.testcases.DashboardTest -->
       <class name="com.mk.testcases.Herokuapptestcases">
         <methods>
-          <include name="validateTinyMceEditor"/>
-          <include name="setup"/>
           <include name="addRemoveElements"/>
-          <include name="validateFileUpload"/>
-          <include name="validateDragAndDrop"/>
-          <include name="validateCheckboxes"/>
-          <include name="validateDropdown"/>
-          <include name="validateJSPrompt"/>
-          <include name="validateContextMenuAlert"/>
-          <include name="verifyTextInFrames"/>
-          <include name="tearDown"/>
-          <include name="validateJSAlert"/>
-          <include name="validateLastNameSorting"/>
-          <include name="testNewWindowText"/>
-          <include name="validateBrokenImages"/>
-          <include name="validateEmailColumnFormat"/>
+          <include name="setup"/>
           <include name="aftersuite"/>
-          <include name="testShadowDom"/>
-          <include name="validateJSConfirm"/>
-          <include name="testTableHeaders"/>
+          <include name="validateContextMenuAlert"/>
+          <include name="tearDown"/>
         </methods>
       </class> <!-- com.mk.testcases.Herokuapptestcases -->
     </classes>
