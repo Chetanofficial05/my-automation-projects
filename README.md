@@ -23,6 +23,7 @@ This repository contains two automation projects: Rest Assured and Selenium.
   - Data-driven testing using TestNG
   - Beautiful Extent Report, Log4J
   - Page Object Model (POM) design pattern.
+  - Cross Browser compatibility
 - **How to run:**
   - Clone the repository.
   - Navigate to `selenium-project`.
